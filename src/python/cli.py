@@ -21,18 +21,24 @@ def main():
                        help="Mastodon post visibility (default: public)")
     parser.add_argument("--session", default="kommen",
                        help="Instagram session file name (default: kommen)")
+    parser.add_argument("--tracker", default="posted_instagram_ids.txt",
+                       help="File to track posted Instagram IDs (default: posted_instagram_ids.txt)")
 
     args = parser.parse_args()
 
     try:
-        # Pass just the session name, not the full path
-        app = InstaDon(session_file=args.session)
+        app = InstaDon(session_file=args.session, tracker_file=args.tracker)
         result = app.post_latest_from_profile(args.profile, args.visibility)
-
-        print(f"✅ Successfully created Mastodon draft!")
-        print(f"Draft ID: {result.get('id')}")
-        print(f"Profile: {args.profile}")
-        print(f"Visibility: {args.visibility}")
+        
+        if result["status"] == "skipped":
+            print(f"⏭️  Post already processed: {result['shortcode']}")
+            print(f"Instagram URL: {result['instagram_url']}")
+        else:
+            print(f"✅ Successfully created Mastodon draft!")
+            print(f"Draft ID: {result['draft'].get('id')}")
+            print(f"Instagram shortcode: {result['shortcode']}")
+            print(f"Profile: {args.profile}")
+            print(f"Visibility: {args.visibility}")
 
     except Exception as e:
         print(f"❌ Error: {e}", file=sys.stderr)

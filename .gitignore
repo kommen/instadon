@@ -8,3 +8,6 @@
 # Instagram session files (contain login credentials)
 kommen
 session-*
+
+# Posted Instagram IDs tracker
+posted_instagram_ids.txt
