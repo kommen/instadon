@@ -21,6 +21,7 @@
       posts (py. profile get_posts)]
   posts)
 
+
 (def json-headers {:accept "application/json"
                    :content-type "application/json"})
 
