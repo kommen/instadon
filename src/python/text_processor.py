@@ -13,22 +13,22 @@ class TextProcessor:
         )
         self.model = CONFIG["openrouter"]["model"]
         self.max_chars = 500
-    
+
     def summarize_if_needed(self, text: str) -> str:
         """Summarize text if it exceeds character limit."""
         if not text:
             return text
-            
+
         if len(text) <= self.max_chars:
             logger.info(f"Text length {len(text)} chars - no summarization needed")
             return text
-        
+
         logger.info(f"Text length {len(text)} chars - summarizing with OpenRouter")
         return self._summarize_text(text)
-    
+
     def _summarize_text(self, text: str) -> str:
         """Use OpenRouter to summarize the text."""
-        prompt = f"""Please summarize this social media post to fit within 500 characters while preserving the key message and tone. Keep it engaging and authentic:
+        prompt = f"""Please summarize this social media post to fit within 500 characters while preserving the key message and tone. Replace @-metions with names. Use the source language for the summary. Only use very common abbriviations'. Don't use any ascii formatting except for list items. preserve emojis and also formatting like lists done with emojis. Keep it engaging and authentic:
 
 {text}
 
@@ -43,18 +43,18 @@ Summary (max 500 chars):"""
                 max_tokens=150,
                 temperature=0.7
             )
-            
+
             summary = response.choices[0].message.content.strip()
-            
+
             # Ensure it's within limit
             if len(summary) > self.max_chars:
                 summary = summary[:self.max_chars-3] + "..."
-            
+
             logger.info(f"Summarized from {len(text)} to {len(summary)} chars")
             logger.info(f"Summary: {summary}")
-            
+
             return summary
-            
+
         except Exception as e:
             logger.error(f"Failed to summarize text: {e}")
             # Fallback: truncate with ellipsis

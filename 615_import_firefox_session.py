@@ -5,7 +5,6 @@ from platform import system
 from sqlite3 import OperationalError, connect
 
 import sys
-sys.path.append("/opt/homebrew/Cellar/instaloader/4.14.1/libexec/lib/python3.13/site-packages")
 
 try:
     from instaloader import ConnectionException, Instaloader

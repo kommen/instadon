@@ -4,3 +4,7 @@
 .aider*
 /.clj-kondo/.cache/
 /src/python/__pycache__/
+
+# Instagram session files (contain login credentials)
+kommen
+session-*
