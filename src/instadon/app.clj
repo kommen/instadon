@@ -37,7 +37,7 @@
         params {:status status
                 :media_ids media-ids
                 :visibility visibility
-                #_#_:draft true}
+                :draft true}
         headers {"Authorization" (str "Bearer " (get-in config [:mastodon :access-token]))}]
     (http/post url {:headers (merge json-headers
                                     headers)
