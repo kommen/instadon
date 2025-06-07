@@ -11,15 +11,43 @@
 (require-python
  :from "/opt/homebrew/Cellar/instaloader/4.14.1/libexec/lib/python3.13/site-packages"
  'instaloader)
+(require-python 'itertools)
+(require-python '[builtins :as py-builtins])
 
-(def L (instaloader/Instaloader))
-(py. L load_session_from_file "kommen")
-(def post (py. instaloader/Post from_shortcode (py.- L context) "DJeNLlxxTHl"))
+(defonce L
+  (let [l (instaloader/Instaloader)]
+    (py. l load_session_from_file "kommen")
+    l))
 
-(py.- post caption)
-(let [profile (py. instaloader/Profile from_username (py.- L context) "kulturneubau")
-      posts (py. profile get_posts)]
-  posts)
+(defn latest-post
+  "Get the latest post from a given instagram profile by sorting the most recent ones by date."
+  [profile-name]
+  (let [profile (py. instaloader/Profile from_username (py.- L context) profile-name)
+        posts-iterator (py. profile get_posts)
+        ;; Fetch the 10 most recent posts. get_posts() usually returns a reverse-chronological iterator,
+        ;; but pinned posts can appear first regardless of date.
+        latest-posts-iter (itertools/islice posts-iterator 10)
+        ;; Filter out pinned posts, then convert the resulting iterator to a Clojure vector.
+        unpinned-posts (py/->jvm (py-builtins/filter (fn [p] (not (py.- p is_pinned)))
+                                                     latest-posts-iter))
+        #_#_sorted-posts (sort-by #(py.- % date_utc) > unpinned-posts)]
+    unpinned-posts))
+
+(comment
+  (def post (py. instaloader/Post from_shortcode (py.- L context) "DJeNLlxxTHl"))
+  (py.- post date_utc)
+
+  (py.- post caption)
+  (let [profile (py. instaloader/Profile from_username (py.- L context) "kulturneubau")
+        posts (py. profile get_posts)]
+    posts)
+
+  ;; Example usage of the new function
+  (let [latest (latest-post "kulturneubau")]
+    (def lp latest))
+
+  (py.- lp date_utc)
+  )
 
 
 (def json-headers {:accept "application/json"
