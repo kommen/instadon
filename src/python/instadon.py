@@ -1,12 +1,14 @@
 from .instagram import InstagramClient
 from .mastodon import MastodonClient
 from .media import download_from_cobalt, process_cobalt_result
+from .text_processor import TextProcessor
 from typing import List
 
 class InstaDon:
     def __init__(self, session_file: str = "kommen"):
         self.instagram = InstagramClient(session_file)
         self.mastodon = MastodonClient()
+        self.text_processor = TextProcessor()
     
     def post_latest_from_profile(self, profile_name: str, visibility: str = "public"):
         """Get latest post from Instagram profile and create Mastodon draft."""
@@ -34,9 +36,12 @@ class InstaDon:
             )
             media_ids.append(media_id)
         
+        # Process status text (summarize if needed)
+        original_text = latest_post.caption or ""
+        processed_text = self.text_processor.summarize_if_needed(original_text)
+        
         # Create draft post
-        status_text = latest_post.caption or ""
-        draft = self.mastodon.create_draft(status_text, media_ids, visibility)
+        draft = self.mastodon.create_draft(processed_text, media_ids, visibility)
         
         # Clean up temporary files
         for media_file in media_files:

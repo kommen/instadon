@@ -9,5 +9,10 @@ CONFIG = {
     },
     "cobalt": {
         "url": "https://cobalt.uber.space/"
+    },
+    "openrouter": {
+        "api_key": os.getenv("OPENROUTER_API_KEY"),
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "deepseek/deepseek-chat-v3-0324:free"
     }
 }
