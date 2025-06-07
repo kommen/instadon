@@ -3,3 +3,4 @@
 /classes/
 .aider*
 /.clj-kondo/.cache/
+/src/python/__pycache__/
