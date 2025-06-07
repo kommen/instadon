@@ -1,9 +1,11 @@
-/.cpcache/
-/.nrepl-port
-/classes/
-.aider*
-/.clj-kondo/.cache/
+# Python
 /src/python/__pycache__/
+venv/
+*.pyc
+__pycache__/
+
+# Environment and secrets
+.env
 
 # Instagram session files (contain login credentials)
 kommen
@@ -11,3 +13,6 @@ session-*
 
 # Posted Instagram IDs tracker
 posted_instagram_ids.txt
+
+# General
+.aider*
