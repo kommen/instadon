@@ -2,3 +2,4 @@
 /.nrepl-port
 /classes/
 .aider*
+/.clj-kondo/.cache/
