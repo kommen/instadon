@@ -31,8 +31,8 @@ def main():
             print(f"⏭️  Post already processed: {result['shortcode']}")
             print(f"Instagram URL: {result['instagram_url']}")
         else:
-            print(f"✅ Successfully created Mastodon draft!")
-            print(f"Draft ID: {result['draft'].get('id')}")
+            print(f"✅ Successfully created Mastodon post!")
+            print(f"Post ID: {result['post'].get('id')}")
             print(f"Instagram shortcode: {result['shortcode']}")
             print(f"Profile: {args.profile}")
             print(f"Visibility: {args.visibility}")

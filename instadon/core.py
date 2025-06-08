@@ -60,10 +60,10 @@ class InstaDon:
             original_text = latest_post.caption or ""
             processed_text = self.text_processor.summarize_if_needed(original_text)
             
-            # Create draft post
-            draft = self.mastodon.create_draft(processed_text, media_ids, visibility)
+            # Create post
+            post = self.mastodon.create_post(processed_text, media_ids, visibility)
             
-            # Mark as posted only after successful Mastodon draft creation
+            # Mark as posted only after successful Mastodon post creation
             self.post_tracker.mark_as_posted(shortcode)
             
             # Clean up temporary files
@@ -73,7 +73,7 @@ class InstaDon:
             logger.info(f"Successfully processed post {shortcode}")
             return {
                 "status": "success",
-                "draft": draft,
+                "post": post,
                 "shortcode": shortcode,
                 "instagram_url": instagram_url
             }

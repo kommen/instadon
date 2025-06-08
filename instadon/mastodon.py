@@ -29,18 +29,17 @@ class MastodonClient:
             
             return response.json()['id']
     
-    def create_draft(self, status: str, media_ids: List[str], visibility: str = "public") -> Dict[str, Any]:
-        """Create a draft post in Mastodon."""
+    def create_post(self, status: str, media_ids: List[str], visibility: str = "public") -> Dict[str, Any]:
+        """Create a post in Mastodon."""
         url = f"{self.instance}/api/v1/statuses"
         
         data = {
             "status": status,
             "media_ids": media_ids,
-            "visibility": visibility,
-            "draft": True
+            "visibility": visibility
         }
         
-        logger.info(f"Creating Mastodon draft at: {url}")
+        logger.info(f"Creating Mastodon post at: {url}")
         logger.info(f"Request headers: {self.headers}")
         logger.info(f"Request data: {data}")
         
