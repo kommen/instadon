@@ -50,10 +50,24 @@ def download_from_cobalt(url: str) -> Dict[str, Any]:
             logger.error(f"Error response text: {e.response.text}")
         raise
 
-def url_to_file(url: str, suffix: str = ".jpeg") -> Path:
+def url_to_file(url: str, suffix: str = None) -> Path:
     """Download a file from URL to temporary file."""
     response = requests.get(url)
     response.raise_for_status()
+
+    # Auto-detect file extension if not provided
+    if suffix is None:
+        content_type = response.headers.get('content-type', '')
+        if 'video' in content_type:
+            suffix = ".mp4"
+        elif 'image' in content_type:
+            suffix = ".jpeg"
+        else:
+            # Default based on URL extension or fallback to .jpeg
+            if any(ext in url.lower() for ext in ['.mp4', '.mov', '.avi']):
+                suffix = ".mp4"
+            else:
+                suffix = ".jpeg"
 
     temp_file = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
     temp_file.write(response.content)
@@ -67,17 +81,18 @@ def process_cobalt_result(result: Dict[str, Any]) -> List[Path]:
     logger.info(f"Processing Cobalt result with status: {status}")
 
     if status == "picker":
-        # Filter for photos and download them
+        # Filter for photos and videos and download them
         picker_items = result.get("picker", [])
         logger.info(f"Found {len(picker_items)} items in picker")
 
-        photos = [item for item in picker_items if item.get("type") == "photo"]
-        logger.info(f"Found {len(photos)} photos to download")
+        media_items = [item for item in picker_items if item.get("type") in ["photo", "video"]]
+        logger.info(f"Found {len(media_items)} media items to download")
 
-        for i, photo in enumerate(photos):
-            logger.info(f"Photo {i+1}: {photo.get('url', 'No URL')}")
+        for i, media_item in enumerate(media_items):
+            item_type = media_item.get("type", "unknown")
+            logger.info(f"Media {i+1} ({item_type}): {media_item.get('url', 'No URL')}")
 
-        return [url_to_file(photo["url"]) for photo in photos]
+        return [url_to_file(media_item["url"]) for media_item in media_items]
 
     elif status == "tunnel":
         # Single file download

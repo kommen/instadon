@@ -28,11 +28,17 @@ class TextProcessor:
 
     def _summarize_text(self, text: str) -> str:
         """Use OpenRouter to summarize the text."""
-        prompt = f"""Please summarize this social media post to fit within 500 characters while preserving the key message and tone. Replace @-metions with names. Use the source language for the summary. Only use very common abbriviations'. Don't use any ascii formatting except for list items. preserve emojis and also formatting like lists done with emojis. Keep it engaging and authentic:
+        prompt = f"""Please summarize this social media post to fit within 500 characters while preserving the key message and tone. 
+
+IMPORTANT: You must respond in the exact same language as the input text. If the input is in German, respond in German. If it's in English, respond in English. Do not translate or change the language.
+
+Replace @-mentions with names. Only use very common abbreviations. Don't use any ascii formatting except for list items. Preserve emojis and formatting like lists done with emojis. Keep it engaging and authentic.
+
+Only reply with the summarized text (no stats, no quotes around the summary):
 
 {text}
 
-Summary (max 500 chars):"""
+Summary (max 500 chars, same language as input):"""
 
         try:
             response = self.client.chat.completions.create(
