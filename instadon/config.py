@@ -7,13 +7,21 @@ load_dotenv()
 CONFIG = {
     "mastodon": {
         "accounts": {
-            "neubau.social": {
-                "instance": os.getenv("MASTODON_INSTANCE"),
-                "access_token": os.getenv("MASTODON_ACCESS_TOKEN")
+            "kulturneubau@neubau.social": {
+                "instance": "https://neubau.social",
+                "access_token": os.getenv("KULTURNEUBAU_MASTODON_ACCESS_TOKEN")
             },
-            "wien.rocks": {
-                "instance": os.getenv("MASTODON_INSTANCE_2"),
-                "access_token": os.getenv("MASTODON_ACCESS_TOKEN_2")
+            "dieterkomendera@neubau.social": {
+                "instance": "https://neubau.social",
+                "access_token": os.getenv("DIETERKOMENDERA_MASTODON_ACCESS_TOKEN")
+            },
+            "GrueneNeubau@neubau.social": {
+                "instance": "https://neubau.social",
+                "access_token": os.getenv("GRUENENEUBAU_MASTODON_ACCESS_TOKEN")
+            },
+            "kaffemik@neubau.social": {
+                "instance": "https://neubau.social",
+                "access_token": os.getenv("KAFFEMIK_MASTODON_ACCESS_TOKEN")
             }
         }
     },
