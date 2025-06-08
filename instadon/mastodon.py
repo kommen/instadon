@@ -8,13 +8,26 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class MastodonClient:
-    def __init__(self):
-        self.instance = CONFIG["mastodon"]["instance"]
-        self.access_token = CONFIG["mastodon"]["access_token"]
+    def __init__(self, account: str = "default"):
+        accounts = CONFIG["mastodon"]["accounts"]
+        if account not in accounts:
+            available_accounts = list(accounts.keys())
+            raise ValueError(f"Account '{account}' not found. Available accounts: {available_accounts}")
+        
+        account_config = accounts[account]
+        self.instance = account_config["instance"]
+        self.access_token = account_config["access_token"]
+        self.account_name = account
+        
+        if not self.access_token:
+            raise ValueError(f"No access token configured for account '{account}'")
+        
         self.headers = {
             "Authorization": f"Bearer {self.access_token}",
             "Accept": "application/json"
         }
+        
+        logger.info(f"Initialized Mastodon client for account '{account}' at {self.instance}")
     
     def upload_media(self, file_path: str, description: str) -> str:
         """Upload media to Mastodon and return media ID."""

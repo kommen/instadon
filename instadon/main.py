@@ -25,11 +25,13 @@ def main():
                        help="Instagram session file name (default: kommen)")
     parser.add_argument("--tracker", default="data/posted_instagram_ids.txt",
                        help="File to track posted Instagram IDs")
+    parser.add_argument("--account", default="default",
+                       help="Mastodon account to post to (default: default)")
 
     args = parser.parse_args()
 
     try:
-        app = InstaDon(session_file=args.session, tracker_file=args.tracker)
+        app = InstaDon(session_file=args.session, tracker_file=args.tracker, mastodon_account=args.account)
         
         # Choose between profile latest post or specific URL
         if args.url:
@@ -47,6 +49,7 @@ def main():
             print(f"Post ID: {result['post'].get('id')}")
             print(f"Instagram shortcode: {result['shortcode']}")
             print(f"Source: {source_info}")
+            print(f"Mastodon account: {args.account}")
             print(f"Visibility: {args.visibility}")
 
     except Exception as e:
