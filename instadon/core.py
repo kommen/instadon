@@ -69,8 +69,8 @@ class InstaDon:
             media_ids = []
             for media_file in media_files:
                 media_id = self.mastodon.upload_media(
-                    str(media_file), 
-                    instagram_post.caption or "Instagram post"
+                    str(media_file),
+                    instagram_post.accessibility_caption
                 )
                 media_ids.append(media_id)
             
