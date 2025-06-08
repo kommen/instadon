@@ -35,3 +35,5 @@ data/sessions/
 # General
 .aider*
 .DS_Store
+/posted_instagram_ids.txt
+/session-kommen

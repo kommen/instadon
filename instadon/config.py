@@ -7,13 +7,13 @@ load_dotenv()
 CONFIG = {
     "mastodon": {
         "accounts": {
-            "default": {
-                "instance": os.getenv("MASTODON_INSTANCE", "https://neubau.social"),
-                "access_token": os.getenv("MASTODON_ACCESS_TOKEN", "czPVtqZUvT5RvxTE_KVygunCiupXxre-71SBIndYf_o")
+            "neubau.social": {
+                "instance": os.getenv("MASTODON_INSTANCE"),
+                "access_token": os.getenv("MASTODON_ACCESS_TOKEN")
             },
-            "secondary": {
-                "instance": os.getenv("MASTODON_INSTANCE_2", "https://mastodon.social"),
-                "access_token": os.getenv("MASTODON_ACCESS_TOKEN_2", "")
+            "wien.rocks": {
+                "instance": os.getenv("MASTODON_INSTANCE_2"),
+                "access_token": os.getenv("MASTODON_ACCESS_TOKEN_2")
             }
         }
     },
@@ -21,7 +21,7 @@ CONFIG = {
         "url": "https://cobalt.uber.space/"
     },
     "openrouter": {
-        "api_key": os.getenv("OPENROUTER_API_KEY", "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"),
+        "api_key": os.getenv("OPENROUTER_API_KEY"),
         "base_url": "https://openrouter.ai/api/v1",
         "model": "deepseek/deepseek-chat-v3-0324:free"
     }
