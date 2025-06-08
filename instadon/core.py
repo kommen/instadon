@@ -22,8 +22,26 @@ class InstaDon:
         if not latest_post:
             raise ValueError(f"No posts found for profile: {profile_name}")
         
-        shortcode = latest_post.shortcode
-        logger.info(f"Found latest post: {shortcode}")
+        return self._process_instagram_post(latest_post, visibility)
+    
+    def post_specific_post(self, instagram_url_or_shortcode: str, visibility: str = "public"):
+        """Get specific Instagram post by URL or shortcode and create Mastodon post."""
+        # Determine if input is URL or shortcode
+        if instagram_url_or_shortcode.startswith('http') or 'instagram.com' in instagram_url_or_shortcode:
+            post = self.instagram.get_post_by_url(instagram_url_or_shortcode)
+        else:
+            # Assume it's a shortcode
+            post = self.instagram.get_post_by_shortcode(instagram_url_or_shortcode)
+        
+        if not post:
+            raise ValueError(f"Could not find Instagram post: {instagram_url_or_shortcode}")
+        
+        return self._process_instagram_post(post, visibility)
+    
+    def _process_instagram_post(self, instagram_post, visibility: str = "public"):
+        """Process an Instagram post and create Mastodon post."""
+        shortcode = instagram_post.shortcode
+        logger.info(f"Processing post: {shortcode}")
         
         # Check if already posted
         if self.post_tracker.is_already_posted(shortcode):
@@ -52,12 +70,12 @@ class InstaDon:
             for media_file in media_files:
                 media_id = self.mastodon.upload_media(
                     str(media_file), 
-                    latest_post.caption or "Instagram post"
+                    instagram_post.caption or "Instagram post"
                 )
                 media_ids.append(media_id)
             
             # Process status text (summarize if needed)
-            original_text = latest_post.caption or ""
+            original_text = instagram_post.caption or ""
             processed_text = self.text_processor.summarize_if_needed(original_text)
             
             # Create post

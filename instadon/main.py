@@ -12,7 +12,12 @@ from .core import InstaDon
 
 def main():
     parser = argparse.ArgumentParser(description="Cross-post from Instagram to Mastodon")
-    parser.add_argument("profile", help="Instagram profile name to fetch from")
+    
+    # Create mutually exclusive group for profile vs URL
+    source_group = parser.add_mutually_exclusive_group(required=True)
+    source_group.add_argument("profile", nargs="?", help="Instagram profile name to fetch latest post from")
+    source_group.add_argument("--url", help="Specific Instagram post URL to cross-post")
+    
     parser.add_argument("--visibility", default="public",
                        choices=["public", "unlisted", "private", "direct"],
                        help="Mastodon post visibility (default: public)")
@@ -25,7 +30,14 @@ def main():
 
     try:
         app = InstaDon(session_file=args.session, tracker_file=args.tracker)
-        result = app.post_latest_from_profile(args.profile, args.visibility)
+        
+        # Choose between profile latest post or specific URL
+        if args.url:
+            result = app.post_specific_post(args.url, args.visibility)
+            source_info = f"URL: {args.url}"
+        else:
+            result = app.post_latest_from_profile(args.profile, args.visibility)
+            source_info = f"Profile: {args.profile}"
         
         if result["status"] == "skipped":
             print(f"⏭️  Post already processed: {result['shortcode']}")
@@ -34,7 +46,7 @@ def main():
             print(f"✅ Successfully created Mastodon post!")
             print(f"Post ID: {result['post'].get('id')}")
             print(f"Instagram shortcode: {result['shortcode']}")
-            print(f"Profile: {args.profile}")
+            print(f"Source: {source_info}")
             print(f"Visibility: {args.visibility}")
 
     except Exception as e:
