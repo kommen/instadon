@@ -78,8 +78,9 @@ class InstaDon:
             original_text = instagram_post.caption or ""
             processed_text = self.text_processor.summarize_if_needed(original_text)
             
-            # Create post
-            post = self.mastodon.create_post(processed_text, media_ids, visibility)
+            # Create post or thread (handles 4+ media automatically)
+            posts = self.mastodon.create_post_thread(processed_text, media_ids, visibility)
+            main_post = posts[0]  # First post in the thread
             
             # Mark as posted only after successful Mastodon post creation
             self.post_tracker.mark_as_posted(shortcode)
@@ -91,7 +92,9 @@ class InstaDon:
             logger.info(f"Successfully processed post {shortcode}")
             return {
                 "status": "success",
-                "post": post,
+                "post": main_post,
+                "posts": posts,  # All posts in the thread
+                "thread_length": len(posts),
                 "shortcode": shortcode,
                 "instagram_url": instagram_url
             }

@@ -45,8 +45,14 @@ def main():
             print(f"⏭️  Post already processed: {result['shortcode']}")
             print(f"Instagram URL: {result['instagram_url']}")
         else:
-            print(f"✅ Successfully created Mastodon post!")
-            print(f"Post ID: {result['post'].get('id')}")
+            thread_length = result.get('thread_length', 1)
+            if thread_length > 1:
+                print(f"✅ Successfully created Mastodon thread with {thread_length} posts!")
+                print(f"Main post ID: {result['post'].get('id')}")
+                print(f"Thread contains {len(result.get('posts', []))} posts total")
+            else:
+                print(f"✅ Successfully created Mastodon post!")
+                print(f"Post ID: {result['post'].get('id')}")
             print(f"Instagram shortcode: {result['shortcode']}")
             print(f"Source: {source_info}")
             print(f"Mastodon account: {args.account}")

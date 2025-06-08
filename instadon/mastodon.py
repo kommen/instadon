@@ -42,7 +42,7 @@ class MastodonClient:
             
             return response.json()['id']
     
-    def create_post(self, status: str, media_ids: List[str], visibility: str = "public") -> Dict[str, Any]:
+    def create_post(self, status: str, media_ids: List[str], visibility: str = "public", in_reply_to_id: Optional[str] = None) -> Dict[str, Any]:
         """Create a post in Mastodon."""
         url = f"{self.instance}/api/v1/statuses"
         
@@ -51,6 +51,9 @@ class MastodonClient:
             "media_ids": media_ids,
             "visibility": visibility
         }
+        
+        if in_reply_to_id:
+            data["in_reply_to_id"] = in_reply_to_id
         
         logger.info(f"Creating Mastodon post at: {url}")
         logger.info(f"Request headers: {self.headers}")
@@ -85,3 +88,40 @@ class MastodonClient:
             if hasattr(e, 'response') and e.response is not None:
                 logger.error(f"Error response text: {e.response.text}")
             raise
+
+    def create_post_thread(self, status: str, media_ids: List[str], visibility: str = "public") -> List[Dict[str, Any]]:
+        """Create a thread of posts if media exceeds Mastodon's 4-attachment limit."""
+        MAX_MEDIA_PER_POST = 4
+        posts = []
+        
+        if len(media_ids) <= MAX_MEDIA_PER_POST:
+            # Single post is sufficient
+            post = self.create_post(status, media_ids, visibility)
+            posts.append(post)
+            return posts
+        
+        # Split media into chunks of 4
+        media_chunks = [media_ids[i:i + MAX_MEDIA_PER_POST] for i in range(0, len(media_ids), MAX_MEDIA_PER_POST)]
+        
+        logger.info(f"Creating thread with {len(media_chunks)} posts for {len(media_ids)} media files")
+        
+        # Create first post with original status and visibility
+        first_chunk = media_chunks[0]
+        first_post = self.create_post(status, first_chunk, visibility)
+        posts.append(first_post)
+        
+        # Create reply posts for remaining media chunks
+        reply_to_id = first_post["id"]
+        for i, chunk in enumerate(media_chunks[1:], 1):
+            # Reply posts are unlisted to avoid spam
+            reply_visibility = "unlisted"
+            reply_status = f"({i + 1}/{len(media_chunks)})"  # Simple continuation indicator
+            
+            reply_post = self.create_post(reply_status, chunk, reply_visibility, reply_to_id)
+            posts.append(reply_post)
+            
+            # Next reply should reply to this post to create a chain
+            reply_to_id = reply_post["id"]
+        
+        logger.info(f"Successfully created thread with {len(posts)} posts")
+        return posts
