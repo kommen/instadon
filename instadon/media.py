@@ -100,6 +100,23 @@ def process_cobalt_result(result: Dict[str, Any]) -> List[Path]:
         logger.info(f"Single file download URL: {tunnel_url}")
         return [url_to_file(tunnel_url)]
 
+    elif status == "redirect":
+        # Direct file download with redirect URL
+        redirect_url = result.get("url")
+        filename = result.get("filename", "")
+        logger.info(f"Redirect download URL: {redirect_url}")
+        logger.info(f"Suggested filename: {filename}")
+        
+        # Extract file extension from filename if available
+        suffix = None
+        if filename:
+            if filename.lower().endswith('.mp4'):
+                suffix = ".mp4"
+            elif filename.lower().endswith(('.jpg', '.jpeg')):
+                suffix = ".jpeg"
+        
+        return [url_to_file(redirect_url, suffix)]
+
     else:
         logger.warning(f"Unknown status '{status}' in Cobalt result")
         logger.warning(f"Full result: {result}")
