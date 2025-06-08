@@ -7,10 +7,7 @@ import argparse
 import sys
 from pathlib import Path
 
-# Add the src directory to Python path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from python.instadon import InstaDon
+from .core import InstaDon
 
 
 def main():
@@ -21,8 +18,8 @@ def main():
                        help="Mastodon post visibility (default: public)")
     parser.add_argument("--session", default="kommen",
                        help="Instagram session file name (default: kommen)")
-    parser.add_argument("--tracker", default="posted_instagram_ids.txt",
-                       help="File to track posted Instagram IDs (default: posted_instagram_ids.txt)")
+    parser.add_argument("--tracker", default="data/posted_instagram_ids.txt",
+                       help="File to track posted Instagram IDs")
 
     args = parser.parse_args()
 

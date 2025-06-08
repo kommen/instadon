@@ -1,18 +1,37 @@
 # Python
-/src/python/__pycache__/
-venv/
-*.pyc
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
 
 # Environment and secrets
 .env
 
-# Instagram session files (contain login credentials)
-kommen
-session-*
-
-# Posted Instagram IDs tracker
-posted_instagram_ids.txt
+# Data files
+data/posted_instagram_ids.txt
+data/sessions/
 
 # General
 .aider*
+.DS_Store

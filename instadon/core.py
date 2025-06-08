@@ -82,9 +82,3 @@ class InstaDon:
             logger.error(f"Failed to process post {shortcode}: {e}")
             # Don't mark as posted if there was an error
             raise
-
-# Example usage
-if __name__ == "__main__":
-    app = InstaDon()
-    result = app.post_latest_from_profile("kulturneubau")
-    print(f"Result: {result}")
