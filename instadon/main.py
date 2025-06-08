@@ -25,13 +25,13 @@ def main():
                        help="Instagram session file name (default: kommen)")
     parser.add_argument("--tracker", default="data/posted_instagram_ids.txt",
                        help="File to track posted Instagram IDs")
-    parser.add_argument("--account", default="default",
-                       help="Mastodon account to post to (default: default)")
+    parser.add_argument("--account", required=True,
+                       help="Mastodon account to post to (required)")
 
     args = parser.parse_args()
 
     try:
-        app = InstaDon(session_file=args.session, tracker_file=args.tracker, mastodon_account=args.account)
+        app = InstaDon(mastodon_account=args.account, session_file=args.session, tracker_file=args.tracker)
         
         # Choose between profile latest post or specific URL
         if args.url:

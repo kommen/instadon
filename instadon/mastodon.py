@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class MastodonClient:
-    def __init__(self, account: str = "default"):
+    def __init__(self, account: str):
         accounts = CONFIG["mastodon"]["accounts"]
         if account not in accounts:
             available_accounts = list(accounts.keys())

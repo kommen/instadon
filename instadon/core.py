@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class InstaDon:
-    def __init__(self, session_file: str = "kommen", tracker_file: str = "posted_instagram_ids.txt", mastodon_account: str = "default"):
+    def __init__(self, mastodon_account: str, session_file: str = "kommen", tracker_file: str = "posted_instagram_ids.txt"):
         self.instagram = InstagramClient(session_file)
         self.mastodon = MastodonClient(mastodon_account)
         self.text_processor = TextProcessor()
