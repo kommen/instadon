@@ -15,20 +15,20 @@ class TextProcessor:
         self.max_chars = 500
 
     def summarize_if_needed(self, text: str) -> str:
-        """Summarize text if it exceeds character limit."""
+        """Process text and summarize if it exceeds character limit."""
         if not text:
             return text
 
         if len(text) <= self.max_chars:
-            logger.info(f"Text length {len(text)} chars - no summarization needed")
-            return text
+            logger.info(f"Text length {len(text)} chars - processing @-mentions only")
+            return self._process_mentions_only(text)
 
         logger.info(f"Text length {len(text)} chars - summarizing with OpenRouter")
         return self._summarize_text(text)
 
     def _summarize_text(self, text: str) -> str:
         """Use OpenRouter to summarize the text."""
-        prompt = f"""Please summarize this social media post to fit within 500 characters while preserving the key message and tone. 
+        prompt = f"""Please summarize this social media post to fit within 500 characters while preserving the key message and tone.
 
 IMPORTANT: You must respond in the exact same language as the input text. If the input is in German, respond in German. If it's in English, respond in English. Do not translate or change the language.
 
@@ -67,3 +67,40 @@ Summary (max 500 chars, same language as input):"""
             fallback = text[:self.max_chars-3] + "..."
             logger.info(f"Using fallback truncation: {len(fallback)} chars")
             return fallback
+
+    def _process_mentions_only(self, text: str) -> str:
+        """Process @-mentions without summarizing."""
+        prompt = f"""Please process this social media post by replacing @-mentions (usernames starting with @) with names derived from them, but do NOT summarize or shorten the text.
+
+IMPORTANT: You must respond in the exact same language as the input text. If the input is in German, respond in German. If it's in English, respond in English. Do not translate or change the language.
+
+Keep the original text length and content exactly the same, only replace @-mentions with readable names. Preserve all emojis, formatting, and structure.
+
+Only reply with the processed text (no quotes around it):
+
+{text}
+
+Processed text (same language as input):"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=200,
+                temperature=0.3
+            )
+
+            processed_text = response.choices[0].message.content.strip()
+            
+            logger.info(f"Processed @-mentions: {len(text)} -> {len(processed_text)} chars")
+            logger.info(f"Processed text: {processed_text}")
+
+            return processed_text
+
+        except Exception as e:
+            logger.error(f"Failed to process @-mentions: {e}")
+            # Fallback: return original text
+            logger.info(f"Using original text as fallback")
+            return text
