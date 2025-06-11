@@ -1,12 +1,19 @@
 import instaloader
 from typing import Optional
 from datetime import datetime
+from pathlib import Path
 import re
 
 class InstagramClient:
     def __init__(self, session_file: str = "kommen"):
         self.loader = instaloader.Instaloader()
-        self.loader.load_session_from_file(session_file)
+        
+        # Use session_file as the username and generate local path
+        username = session_file
+        session_path = Path(f"{username}_session")
+        
+        # Load session with username and local file path
+        self.loader.load_session_from_file(username, str(session_path))
     
     def latest_post(self, profile_name: str):
         """Get the latest post from a given Instagram profile."""
